@@ -9,6 +9,7 @@ import Navbar from './components/Navbar'; // Import Navbar component
 import UserForm from './pages/UserForm'; // Import UserForm component
 // import ImageVerification from './pages/ImageVerification'; // Import ImageVerification component
 import OCRComponent from './components/OCRComponent';
+import AadharUpload from './pages/AadharUpload'; // Update the import
 
 function App() {
   return (
@@ -16,14 +17,13 @@ function App() {
       <BrowserRouter>
         <Navbar />  {/* Navbar at the top */}
         <Routes>
-          <Route path="/" element={<LandingPage />} />  {/* Landing page route */}
-          <Route path="/signin" element={<Signin />} />  {/* Signin route */}
-          <Route path="/signup" element={<Signup />} />  {/* Signup route */}
-          <Route path="/camera-capture" element={<CameraCapture />} />  {/* Camera capture route */}
-          <Route path="/upload" element={<DocumentUpload />} />  {/* Document upload route */}
-          <Route path="/text-extract" element={<OCRComponent   />} />  {/* Add the DocumentUpload route */}
-          <Route path="/user-form" element={<UserForm />} />  {/* UserForm route */}
-          {/* <Route path="/image-verification" element={<ImageVerification />} />  ImageVerification route */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/camera-capture" element={<CameraCapture />} />
+          <Route path="/upload" element={<DocumentUpload />} />  {/* Add the DocumentUpload route */}
+          <Route path="/text-extract" element={<OCRComponent />} />  {/* Add the DocumentUpload route */}
+          {/* <Route path="/about" element={<About />} /> */}
         </Routes>
       </BrowserRouter>
     </>

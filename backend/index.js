@@ -33,6 +33,9 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage });
+const uploadRoutes = require('./routes/upload');
+
+
 
 // Ensure 'uploads' directory exists, create it if it doesn't
 const fs = require('fs');
@@ -61,6 +64,9 @@ app.post('/extract-text', upload.single('image'), (req, res) => {
         res.json({ text: stdout.trim() });
     });
 });
+
+app.use('/api/upload', uploadRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MongoDB connection (optional)
 mongoose.connect(process.env.MONGO_URL)
