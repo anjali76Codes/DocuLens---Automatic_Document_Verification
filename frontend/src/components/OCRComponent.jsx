@@ -3,18 +3,17 @@ import axios from 'axios';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../Firebase.js'; // Import the storage from firebase.js
 import { ToastContainer, toast } from 'react-toastify'; // For notifications
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import 'react-toastify/dist/ReactToastify.css';
 
 const OCRComponent = () => {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [extractedText, setExtractedText] = useState(null);
+  const [extractedText, setExtractedText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [step, setStep] = useState(1);
-  const [previousFileName, setPreviousFileName] = useState('');
   const [progress, setProgress] = useState(0);
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [isDragging, setIsDragging] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const fetchUploadedFiles = async () => {
     try {
@@ -49,9 +48,7 @@ const OCRComponent = () => {
       'state_changed',
       (snapshot) => {
         const simulatedProgress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        setTimeout(() => {
-          setProgress(simulatedProgress);
-        }, 100);
+        setProgress(simulatedProgress);
       },
       (error) => {
         console.error('Upload failed:', error);
@@ -63,35 +60,12 @@ const OCRComponent = () => {
 
         await axios.post('http://localhost:5000/api/files', { url: downloadURL }, { withCredentials: true });
         fetchUploadedFiles();
+        handleExtractText(downloadURL);
       }
     );
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) {
-      setSelectedFile(droppedFile);
-      handleUpload(droppedFile);
-    }
-  };
-
-  const hasUnderscore = (fileName) => {
-    return fileName.split(/[-.]/).some(segment => segment.includes('_'));
-  };
-
-  const handleExtractText = async () => {
+  const handleExtractText = async (imageUrl) => {
     if (!selectedFile) {
       toast.error('Please upload an image for extraction.');
       return;
@@ -111,15 +85,8 @@ const OCRComponent = () => {
       const formattedText = formatExtractedText(currentText);
       setExtractedText(formattedText);
 
-      if (step === 1) {
-        setPreviousFileName(selectedFile.name);
-        setStep(2);
-        setSelectedFile(null);
-      } else {
-        const bothHaveUnderscore = hasUnderscore(previousFileName) && hasUnderscore(selectedFile.name);
-        alert(bothHaveUnderscore ? 'Both documents belong to the same person.' : 'The documents do not belong to the same person.');
-        resetComponent();
-      }
+      // Store extracted info in local storage
+      localStorage.setItem('extractedInfo', JSON.stringify(formattedText));
     } catch (err) {
       console.error('Error extracting text:', err);
       setError('Error extracting text. Please try again.');
@@ -137,23 +104,19 @@ const OCRComponent = () => {
     const gender = genderMatch ? genderMatch[0] : 'Not found';
     const dob = dobMatch ? dobMatch[0] : 'Not found';
 
-    return `
-      Name: ${name}
-      Gender: ${gender}
-      DOB: ${dob}
-    `;
-  };
-
-  const resetComponent = () => {
-    setStep(1);
-    setExtractedText(null);
-    setPreviousFileName('');
+    return `Name: ${name}\nGender: ${gender}\nDOB: ${dob}`;
   };
 
   const clearAll = () => {
     setSelectedFile(null);
     setProgress(0);
+    setExtractedText('');
+    setError('');
     document.getElementById('fileInput').value = '';
+  };
+
+  const handleUploadRemainingDocuments = () => {
+    navigate('/documents'); // Redirect to /documents
   };
 
   return (
@@ -161,10 +124,7 @@ const OCRComponent = () => {
       <h1>OCR Text Extractor</h1>
       <label
         htmlFor="fileInput"
-        className={`border-2 border-dashed border-[#4A4E69] p-4 rounded-lg m-4 w-[50%] flex flex-col justify-center align-middle mx-auto bg-slate-100 cursor-pointer ${isDragging ? 'bg-gray-300' : 'bg-white'}`}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
+        className="border-2 border-dashed border-[#4A4E69] p-4 rounded-lg m-4 w-[50%] flex flex-col justify-center align-middle mx-auto bg-slate-100 cursor-pointer"
       >
         <input
           type="file"
@@ -180,7 +140,7 @@ const OCRComponent = () => {
 
       <section className="flex mx-auto justify-center align-middle">
         <button onClick={handleExtractText} disabled={loading} className="p-3 m-3 bg-[#22223B] text-white rounded-3xl w-[20%]">
-          {loading ? 'Extracting...' : (step === 1 ? 'Extract Text (1st File)' : 'Extract Text (2nd File)')}
+          {loading ? 'Extracting...' : 'Extract Text'}
         </button>
         <button onClick={clearAll} className="p-3 m-3 bg-[#9A8C98] text-white rounded-3xl w-[20%]">Clear</button>
       </section>
@@ -212,6 +172,10 @@ const OCRComponent = () => {
           </li>
         ))}
       </ul>
+
+      <button onClick={handleUploadRemainingDocuments} className="p-3 m-3 bg-blue-600 text-white rounded-3xl w-[20%]">
+        Upload Remaining Documents
+      </button>
 
       <ToastContainer />
     </div>
