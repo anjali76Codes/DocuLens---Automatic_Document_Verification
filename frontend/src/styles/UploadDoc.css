@@ -1,0 +1,52 @@
+/* Styles for the loader */
+.loader {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #144d05; /* Color of the loader */
+    border-radius: 50%;
+    width: 24px; /* Size of the loader */
+    height: 24px; /* Size of the loader */
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Spin animation for the loader */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Checkmark styles */
+  .checkmark {
+    font-size: 24px; /* Size of the checkmark */
+    color: #4CAF50; /* Color of the checkmark */
+    opacity: 0; /* Start hidden */
+    transform: scale(0); /* Start scaled down */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  /* Animation for the checkmark */
+  .checkmark.animate-check {
+    opacity: 1; /* Fade in */
+    transform: scale(1); /* Scale up */
+  }
+  
+  /* Checkbox container styles */
+  .checkbox-container {
+    width: 32px; /* Size of the checkbox */
+    height: 32px; /* Size of the checkbox */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #B0BEC5; /* Border color when unchecked */
+    border-radius: 4px; /* Rounded corners */
+    transition: border-color 0.3s; /* Smooth border color transition */
+  }
+  
+  .checkbox-container.checked {
+    border-color: #4CAF50; /* Border color when checked */
+  }
+  
+  /* Optional hover effect */
+  .checkbox-container:hover {
+    border-color: #90A4AE; /* Slightly darker on hover */
+  }
+  
