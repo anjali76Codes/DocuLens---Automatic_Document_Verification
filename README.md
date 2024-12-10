@@ -1,4 +1,4 @@
-# Doculens 
+# Doculens - Automatic Document Verification
 
 Doculens is an automated document verification system built using the MERN stack. It streamlines document verification processes by allowing users to verify Aadhar details, upload documents, extract text, and match facial data using the Face API. Admins can approve or reject verifications, ensuring a secure and efficient system.
 
@@ -31,5 +31,5 @@ Follow these steps to set up the project on your local machine.
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/doculens.git
+git clone [https://github.com/anjali76Codes/DocuLens---Automatic_Document_Verification.git]
 cd doculens
