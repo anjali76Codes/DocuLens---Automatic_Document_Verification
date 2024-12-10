@@ -31,5 +31,5 @@ Follow these steps to set up the project on your local machine.
 ### Clone the Repository
 
 ```bash
-git clone [https://github.com/anjali76Codes/DocuLens---Automatic_Document_Verification.git]
+git clone https://github.com/anjali76Codes/DocuLens---Automatic_Document_Verification.git
 cd doculens
